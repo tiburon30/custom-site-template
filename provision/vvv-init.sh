@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Provision WordPress Stable
 
-DOMAIN=`get_primary_host "${VVV_SITE_NAME}".test`
+DOMAIN=`get_primary_host "${VVV_SITE_NAME}".loc`
 DOMAINS=`get_hosts "${DOMAIN}"`
 SITE_TITLE=`get_config_value 'site_title' "${DOMAIN}"`
 WP_VERSION=`get_config_value 'wp_version' 'latest'`
@@ -23,7 +23,7 @@ touch ${VVV_PATH_TO_SITE}/log/access.log
 # Install and configure the latest stable version of WordPress
 if [[ ! -f "${VVV_PATH_TO_SITE}/public_html/wp-load.php" ]]; then
     echo "Downloading WordPress..."
-	noroot wp core download --version="${WP_VERSION}"
+	noroot wp core download --locale=ru_RU --version="${WP_VERSION}"
 fi
 
 if [[ ! -f "${VVV_PATH_TO_SITE}/public_html/wp-config.php" ]]; then
