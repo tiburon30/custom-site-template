@@ -60,7 +60,8 @@ if ! $(noroot wp core is-installed); then
 
   noroot wp theme install https://github.com/humandevmode/wp-theme/archive/master.zip
   noroot composer install -o -d ${VVV_PATH_TO_SITE}/public_html/wp-content/themes/wp-theme
-  noroot gulp --gulpfile ${VVV_PATH_TO_SITE}/public_html/wp-content/themes/wp-theme/gulpfile.js --cwd ${VVV_PATH_TO_SITE}/public_html/wp-content/themes/wp-theme/
+  noroot npm i --prefix ${VVV_PATH_TO_SITE}/public_html/wp-content/themes/wp-theme/
+  noroot gulp build --gulpfile ${VVV_PATH_TO_SITE}/public_html/wp-content/themes/wp-theme/gulpfile.js --cwd ${VVV_PATH_TO_SITE}/public_html/wp-content/themes/wp-theme/
   noroot wp theme activate wp-theme
 
   noroot wp theme uninstall twentyfifteen twentysixteen twentyseventeen
