@@ -54,7 +54,12 @@ if ! $(noroot wp core is-installed); then
   noroot wp plugin install flamingo --activate
   noroot wp plugin install cyr3lat --activate
   noroot wp plugin install https://github.com/humandevmode/wp-core-plugin/archive/master.zip --activate
+  noroot wp plugin uninstall hello --deactivate
+  noroot wp plugin uninstall akismet --deactivate
   noroot wp theme install https://github.com/humandevmode/wp-theme/archive/master.zip --activate
+  noroot wp theme uninstall twentyfifteen --deactivate
+  noroot wp theme uninstall twentysixteen --deactivate
+  noroot wp theme uninstall twentyseventeen --deactivate
 else
   echo "Updating WordPress Stable..."
   cd ${VVV_PATH_TO_SITE}/public_html
