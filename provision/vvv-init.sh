@@ -53,13 +53,18 @@ if ! $(noroot wp core is-installed); then
   noroot wp plugin install contact-form-7 --activate
   noroot wp plugin install flamingo --activate
   noroot wp plugin install cyr3lat --activate
-  noroot wp plugin install https://github.com/humandevmode/wp-core-plugin/archive/master.zip --activate
-  noroot wp plugin uninstall hello --deactivate
-  noroot wp plugin uninstall akismet --deactivate
-  noroot wp theme install https://github.com/humandevmode/wp-theme/archive/master.zip --activate
-  noroot wp theme uninstall twentyfifteen --deactivate
-  noroot wp theme uninstall twentysixteen --deactivate
-  noroot wp theme uninstall twentyseventeen --deactivate
+
+  noroot wp plugin install https://github.com/humandevmode/wp-core-plugin/archive/master.zip
+  noroot composer install -o -d ${VVV_PATH_TO_SITE}/public_html/wp-content/plugins/wp-core-plugin
+  noroot wp plugin activate wp-core-plugin
+
+  noroot wp theme install https://github.com/humandevmode/wp-theme/archive/master.zip
+  noroot composer install -o -d ${VVV_PATH_TO_SITE}/public_html/wp-content/themes/wp-theme
+  noroot gulp --gulpfil ${VVV_PATH_TO_SITE}/public_html/wp-content/themes/wp-theme/gulpfile.js --cwd ${VVV_PATH_TO_SITE}/public_html/wp-content/themes/wp-theme/
+  noroot wp theme activate wp-theme
+
+  noroot wp theme uninstall twentyfifteen twentysixteen twentyseventeen
+  noroot wp plugin uninstall hello akismet --deactivate
 else
   echo "Updating WordPress Stable..."
   cd ${VVV_PATH_TO_SITE}/public_html
