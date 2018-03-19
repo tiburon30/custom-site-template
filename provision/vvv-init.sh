@@ -45,6 +45,16 @@ if ! $(noroot wp core is-installed); then
   fi
 
   noroot wp core ${INSTALL_COMMAND} --url="${DOMAIN}" --quiet --title="${SITE_TITLE}" --admin_name=admin --admin_email="admin@local.loc" --admin_password="password"
+  noroot wp plugin install query-monitor --activate
+  noroot wp plugin install wordpress-seo --activate
+  noroot wp plugin install breadcrumb-navxt --activate
+  noroot wp plugin install insert-headers-and-footers --activate
+  noroot wp plugin install simple-301-redirects --activate
+  noroot wp plugin install contact-form-7 --activate
+  noroot wp plugin install flamingo --activate
+  noroot wp plugin install cyr3lat --activate
+  noroot wp plugin install https://github.com/humandevmode/wp-core-plugin/archive/master.zip --activate
+  noroot wp theme install https://github.com/humandevmode/wp-theme/archive/master.zip --activate
 else
   echo "Updating WordPress Stable..."
   cd ${VVV_PATH_TO_SITE}/public_html
