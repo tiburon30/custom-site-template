@@ -47,6 +47,8 @@ if ! $(noroot wp core is-installed); then
   fi
 
   noroot wp core ${INSTALL_COMMAND} --url="${DOMAIN}" --quiet --title="${SITE_TITLE}" --admin_name=admin --admin_email="admin@local.loc" --admin_password="password"
+  noroot wp rewrite structure '/%postname%/'
+  noroot wp language core update
   noroot wp plugin install query-monitor wordpress-seo breadcrumb-navxt cyr3lat contact-form-7 flamingo --activate
 
   noroot wp plugin install https://github.com/humandevmode/wp-core-plugin/archive/master.zip
