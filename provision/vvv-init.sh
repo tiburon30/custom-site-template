@@ -11,14 +11,14 @@ DB_NAME=${DB_NAME//[\\\/\.\<\>\:\"\'\|\?\!\*-]/}
 
 # Make a database, if we don't already have one
 echo -e "\nCreating database '${DB_NAME}' (if it's not already there)"
-mysql -u root --password=root -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME}"
-mysql -u root --password=root -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO wp@localhost IDENTIFIED BY 'wp';"
+mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME}"
+mysql -uroot -proot -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO wp@localhost IDENTIFIED BY 'wp';"
 echo -e "\n DB operations done.\n\n"
 
 # Nginx Logs
-mkdir -p ${VVV_PATH_TO_SITE}/log
-touch ${VVV_PATH_TO_SITE}/log/error.log
-touch ${VVV_PATH_TO_SITE}/log/access.log
+mkdir -p ${VVV_PATH_TO_SITE}/logs
+touch ${VVV_PATH_TO_SITE}/logs/error.log
+touch ${VVV_PATH_TO_SITE}/logs/access.log
 
 # Install and configure the latest stable version of WordPress
 if [[ ! -f "${VVV_PATH_TO_SITE}/public_html/wp-load.php" ]]; then
@@ -52,24 +52,14 @@ if ! $(noroot wp core is-installed); then
 
   noroot wp theme install https://github.com/humandevmode/wp-theme/archive/master.zip
   noroot composer install -o -d ${VVV_PATH_TO_SITE}/public_html/wp-content/themes/wp-theme/
+  noroot npm install ${VVV_PATH_TO_SITE}/public_html/wp-content/themes/wp-theme/
   noroot wp theme activate wp-theme
 
   noroot wp theme uninstall twentyfifteen twentysixteen twentyseventeen
   noroot wp plugin uninstall hello akismet --deactivate
   noroot wp rewrite structure '/%postname%/'
   noroot wp language core update
-else
-  echo "Updating WordPress Stable..."
-  noroot wp core update --version="${WP_VERSION}"
 fi
 
 cp -f "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf.tmpl" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
 sed -i "s#{{DOMAINS_HERE}}#${DOMAINS}#" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
-
-if [ -n "$(type -t is_utility_installed)" ] && [ "$(type -t is_utility_installed)" = function ] && `is_utility_installed core tls-ca`; then
-    sed -i "s#{{TLS_CERT}}#ssl_certificate /vagrant/certificates/${VVV_SITE_NAME}/dev.crt;#" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
-    sed -i "s#{{TLS_KEY}}#ssl_certificate_key /vagrant/certificates/${VVV_SITE_NAME}/dev.key;#" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
-else
-    sed -i "s#{{TLS_CERT}}##" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
-    sed -i "s#{{TLS_KEY}}##" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
-fi
