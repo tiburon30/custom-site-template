@@ -4,8 +4,8 @@ server {
     server_name  {{DOMAINS_HERE}};
     root         {vvv_path_to_site}/public_html;
 
-    error_log    {vvv_path_to_site}/log/error.log;
-    access_log   {vvv_path_to_site}/log/access.log;
+    error_log    {vvv_path_to_site}/logs/error.log;
+    access_log   {vvv_path_to_site}/logs/access.log;
 
     set          $upstream {upstream};
 
