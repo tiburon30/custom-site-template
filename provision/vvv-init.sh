@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Provision WordPress Stable
 
-DOMAIN=`get_primary_host "${VVV_SITE_NAME}".loc`
+DOMAIN=`get_primary_host "${VVV_SITE_NAME}".test`
 DOMAINS=`get_hosts "${DOMAIN}"`
 SITE_TITLE=`get_config_value 'site_title' "${DOMAIN}"`
 WP_VERSION=`get_config_value 'wp_version' 'latest'`
@@ -11,19 +11,19 @@ DB_NAME=${DB_NAME//[\\\/\.\<\>\:\"\'\|\?\!\*-]/}
 
 # Make a database, if we don't already have one
 echo -e "\nCreating database '${DB_NAME}' (if it's not already there)"
-mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME}"
-mysql -uroot -proot -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO wp@localhost IDENTIFIED BY 'wp';"
+mysql -u root --password=root -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME}"
+mysql -u root --password=root -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO wp@localhost IDENTIFIED BY 'wp';"
 echo -e "\n DB operations done.\n\n"
 
 # Nginx Logs
-mkdir -p ${VVV_PATH_TO_SITE}/logs
-touch ${VVV_PATH_TO_SITE}/logs/error.log
-touch ${VVV_PATH_TO_SITE}/logs/access.log
+mkdir -p ${VVV_PATH_TO_SITE}/log
+touch ${VVV_PATH_TO_SITE}/log/error.log
+touch ${VVV_PATH_TO_SITE}/log/access.log
 
 # Install and configure the latest stable version of WordPress
 if [[ ! -f "${VVV_PATH_TO_SITE}/public_html/wp-load.php" ]]; then
     echo "Downloading WordPress..."
-	noroot wp core download --locale=ru_RU --version="${WP_VERSION}"
+    noroot wp core download --version="${WP_VERSION}"
 fi
 
 if [[ ! -f "${VVV_PATH_TO_SITE}/public_html/wp-config.php" ]]; then
@@ -45,7 +45,7 @@ if ! $(noroot wp core is-installed); then
   fi
 
   noroot wp core ${INSTALL_COMMAND} --url="${DOMAIN}" --quiet --title="${SITE_TITLE}" --admin_name=admin --admin_email="admin@local.loc" --admin_password="password"
-  noroot wp plugin install query-monitor wordpress-seo breadcrumb-navxt cyr3lat contact-form-7 --activate
+  noroot wp plugin install user-switching query-monitor wordpress-seo breadcrumb-navxt cyr3lat contact-form-7 --activate
   noroot wp plugin install https://github.com/humandevmode/wp-core-plugin/archive/master.zip
   noroot composer install -o -d ${VVV_PATH_TO_SITE}/public_html/wp-content/plugins/wp-core-plugin/
   noroot wp plugin activate wp-core-plugin
