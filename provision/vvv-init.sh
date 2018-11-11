@@ -45,16 +45,15 @@ if ! $(noroot wp core is-installed); then
   fi
 
   noroot wp core ${INSTALL_COMMAND} --url="${DOMAIN}" --quiet --title="${SITE_TITLE}" --admin_name=admin --admin_email="admin@local.loc" --admin_password="password"
-  noroot wp plugin install user-switching query-monitor wordpress-seo breadcrumb-navxt cyr3lat contact-form-7 --activate
+  noroot wp plugin install user-switching query-monitor wordpress-seo breadcrumb-navxt cyr3lat --activate
   noroot wp plugin install https://github.com/humandevmode/wp-core-plugin/archive/master.zip
   noroot composer install -o -d ${VVV_PATH_TO_SITE}/public_html/wp-content/plugins/wp-core-plugin/
   noroot wp plugin activate wp-core-plugin
 
   noroot wp theme install https://github.com/humandevmode/wp-theme/archive/master.zip
   noroot composer install -o -d ${VVV_PATH_TO_SITE}/public_html/wp-content/themes/wp-theme/
-  noroot wp theme activate wp-theme
 
-  noroot wp theme uninstall twentyfifteen twentysixteen twentyseventeen
+  noroot wp theme uninstall twentyseventeen
   noroot wp plugin uninstall hello akismet --deactivate
   noroot wp rewrite structure '/%postname%/'
   noroot wp language core update
