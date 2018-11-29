@@ -8,26 +8,8 @@ let vvvPath = '/srv/www/PATH';
 let localPath = path.join(__dirname, '../');
 let remotePath = '/home/web/sites/PATH';
 
-gulp.task('deploy', ['deploy-plugin', 'deploy-theme'], (cb) => {
-  cb();
-});
-
-gulp.task('deploy-plugin', () => {
-  let source = `${localPath}/public_html/wp-content/plugins/core/`;
-  let dest = `hetzner:${remotePath}/public_html/wp-content/plugins/core/`;
-  let params = `-av --checksum --delete --exclude 'node_modules'`;
-
-  command(`composer install -o -d ${localPath}/public_html/wp-content/plugins/core`, { stdio: [0, 1, 2] });
-  command(`rsync ${source} ${dest} ${params}`, { stdio: [0, 1, 2] });
-});
-
-gulp.task('deploy-theme', () => {
-  let source = `${localPath}/public_html/wp-content/themes/bigbet/`;
-  let dest = `hetzner:${remotePath}/public_html/wp-content/themes/bigbet/`;
-  let params = `-av --checksum --delete --exclude 'node_modules'`;
-
-  command(`rsync ${source} ${dest} ${params}`, { stdio: [0, 1, 2] });
-});
+let mainTheme = 'THEME';
+let corePlugin = 'PLUGIN';
 
 gulp.task('copy-db', () => {
   command(`ssh hetzner wp db export ${remotePath}/dump.sql --path='${remotePath}/public_html'`);
@@ -43,7 +25,35 @@ gulp.task('copy-uploads', () => {
   let dest = `${localPath}/public_html/wp-content/uploads/`;
   let params = `-av --exclude 'node_modules'`;
 
-  command(`rsync ${params} ${source} ${dest}`, { stdio: [0, 1, 2] });
+  command(`rsync ${params} ${source} ${dest}`);
+});
+
+gulp.task('build-plugin', () => {
+  command(`composer install -o -d ${localPath}/public_html/wp-content/plugins/${corePlugin}`);
+});
+
+gulp.task('deploy-plugin', ['build-plugin'], () => {
+  let path = `public_html/wp-content/plugins/${corePlugin}`;
+  let params = `-av --checksum --delete --exclude 'node_modules'`;
+
+  command(`rsync ${localPath}/${path} hetzner:${remotePath}/${path} ${params}`);
+});
+
+gulp.task('build-theme', done => {
+  command(`gulp build --cwd ../public_html/wp-content/themes/${mainTheme}/`);
+  command(`composer install -o -d ../public_html/wp-content/themes/${mainTheme}/`);
+  done();
+});
+
+gulp.task('deploy-theme', () => {
+  let path = `public_html/wp-content/themes/${mainTheme}`;
+  let params = `-av --checksum --delete --exclude 'node_modules'`;
+
+  command(`rsync ${localPath}/${path} hetzner:${remotePath}/${path} ${params}`);
+});
+
+gulp.task('deploy', ['deploy-plugin', 'deploy-theme'], done => {
+  done();
 });
 
 function command(command) {
