@@ -3,5 +3,12 @@
   "version": "0.0.1",
   "devDependencies": {
     "gulp": "^3.9.1"
+  },
+  "scripts": {
+    "copy-db": "gulp copy-db",
+    "copy-uploads": "gulp copy-uploads",
+    "deploy-plugin": "gulp deploy-plugin",
+    "deploy-themes": "gulp deploy-themes",
+    "deploy": "gulp deploy"
   }
 }
