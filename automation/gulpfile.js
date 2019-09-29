@@ -8,7 +8,6 @@ let vvvPath = '/srv/www/PATH';
 let localPath = path.join(__dirname, '../');
 let remotePath = '/home/web/sites/PATH';
 
-let mainTheme = 'THEME';
 let corePlugin = 'PLUGIN';
 
 gulp.task('copy-db', () => {
@@ -33,26 +32,20 @@ gulp.task('build-plugin', () => {
 });
 
 gulp.task('deploy-plugin', ['build-plugin'], () => {
-  let path = `public_html/wp-content/plugins/${corePlugin}`;
+  let path = `public_html/wp-content/plugins/${corePlugin}/`;
   let params = `-av --checksum --delete --exclude 'node_modules'`;
 
   command(`rsync ${localPath}/${path} hetzner:${remotePath}/${path} ${params}`);
 });
 
-gulp.task('build-theme', done => {
-  command(`gulp build --cwd ../public_html/wp-content/themes/${mainTheme}/`);
-  command(`composer install -o -d ../public_html/wp-content/themes/${mainTheme}/`);
-  done();
-});
-
-gulp.task('deploy-theme', () => {
-  let path = `public_html/wp-content/themes/${mainTheme}`;
+gulp.task('deploy-themes', () => {
+  let path = `public_html/wp-content/themes/`;
   let params = `-av --checksum --delete --exclude 'node_modules'`;
 
   command(`rsync ${localPath}/${path} hetzner:${remotePath}/${path} ${params}`);
 });
 
-gulp.task('deploy', ['deploy-plugin', 'deploy-theme'], done => {
+gulp.task('deploy', ['deploy-plugin', 'deploy-themes'], done => {
   done();
 });
 
